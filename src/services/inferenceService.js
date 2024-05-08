@@ -12,17 +12,16 @@ async function predictClassification(model, image) {
         const classes = ['Cancer', 'Non-cancer'];
 
         const prediction = model.predict(tensor);
-        const classResult = tf.argMax(prediction, 1).dataSync()[0];
-        const label = classes[classResult];
+        const predictionValue = prediction.dataSync()[0];
+        let label, suggestion;
 
-        let suggestion;
-
-        if (label === 'Cancer') {
-            suggestion = "Segera periksa ke dokter!"
-        }
-
-        if (label === 'Non-cancer') {
-            suggestion = "Anda sehat!"
+        if (predictionValue >= 0.5) {
+            label = classes[0]; // "Cancer"
+            suggestion = "Segera periksa ke dokter!";
+        } 
+        else {
+            label = classes[1]; // "Non-cancer"
+            suggestion = "Anda sehat!";
         }
 
         return { label, suggestion };
